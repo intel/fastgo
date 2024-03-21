@@ -1,5 +1,11 @@
 # Intel FastGo 
 
+[![GoDoc](https://godoc.org/github.com/intel/fastgo?status.svg)](https://pkg.go.dev/github.com/intel/fastgo)
+[![Go Report Card](https://goreportcard.com/badge/github.com/intel/fastgo)](https://goreportcard.com/report/github.com/intel/fastgo)
+[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/8690/badge)](https://www.bestpractices.dev/projects/8690)
+[![License](https://img.shields.io/github/license/intel/fastgo)](./LICENSE)
+
+
 ## Introduction
 
 Intel FastGo provides optimized Go packages, such as compress/flate and compress/gzip, for Go applications running on the Xeon platform. It is trying to provide an interface as close as possible to the standard libraries in order to provide a good user experience.

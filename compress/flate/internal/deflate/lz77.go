@@ -41,21 +41,31 @@ func hash4(data uint32) uint32 {
 
 func lz77(flush bool, table []uint16, mask uint32, historySize int, hist *histogram, input []byte, processed int, offset int, tokens []token, maxToken int) (nOffset int, ntokens []token) {
 	relative := processed - offset
-	end := len(input) - 4
+	end := len(input) - 8
 	for offset < end {
 		fourBytes := loadU32(input, offset)
 		hash := hash4(fourBytes) & mask
 		lookup := table[hash]
 		dist := uint32(uint16(relative+offset)-lookup) & 0xffff
-		table[hash] = uint16(offset + processed)
+		table[hash] = uint16(offset + relative)
 		if uint32(dist-1) < uint32(historySize) {
-			matchLength := compare(input, offset-int(dist), offset, end-offset)
+			prev := offset - int(dist)
+			var matchLength int
+			test := loadU64(input, prev)
+			test ^= loadU64(input, offset)
+
+			if test != 0 {
+				matchLength = bits.TrailingZeros64(test) / 8
+			} else {
+				matchLength = compare(input, prev+8, offset+8, end-offset-8) + 8
+			}
+
 			if matchLength > 258 {
 				// only update next 3 hash
 				for i := 0; i < 3; i++ {
 					fourBytes := loadU32(input, offset+i)
 					hash := hash4(fourBytes) & mask
-					table[hash] = uint16(processed + offset + i)
+					table[hash] = uint16(relative + offset + i)
 				}
 				lengthSymbol := 258 + 254
 				distSymbol, extraBits := getDistSymbol(dist)
@@ -83,7 +93,7 @@ func lz77(flush bool, table []uint16, mask uint32, historySize int, hist *histog
 					for i := 0; i < 3; i++ {
 						fourBytes := loadU32(input, offset+i)
 						hash := hash4(fourBytes) & mask
-						table[hash] = uint16(processed + offset + i)
+						table[hash] = uint16(relative + offset + i)
 					}
 				}
 				lengthSymbol := matchLength + 254
@@ -121,7 +131,13 @@ func lz77(flush bool, table []uint16, mask uint32, historySize int, hist *histog
 	return offset, tokens
 }
 
+//go:linkname Prefetch runtime/internal/sys.Prefetch
+func Prefetch(addr uintptr)
+
 func compare(input []byte, prev, curr int, maxLength int) (match int) {
+	if maxLength < 8 {
+		return 0
+	}
 	max := maxLength & (^0x7)
 	i := 0
 	for ; i < max; i += 8 {

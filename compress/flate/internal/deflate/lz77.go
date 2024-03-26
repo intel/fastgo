@@ -50,6 +50,7 @@ func lz77(flush bool, table []uint16, mask uint32, historySize int, hist *histog
 		table[hash] = uint16(offset + relative)
 		if uint32(dist-1) < uint32(historySize) {
 			prev := offset - int(dist)
+			// avoid function call overhead
 			var matchLength int
 			test := loadU64(input, prev)
 			test ^= loadU64(input, offset)
@@ -85,6 +86,7 @@ func lz77(flush bool, table []uint16, mask uint32, historySize int, hist *histog
 				}
 				hist.literalCodes[lengthSymbol] += repeat
 				hist.distanceCodes[distSymbol] += repeat
+				fourBytes = loadU32(input, offset)
 			}
 
 			if matchLength >= minMatch {
@@ -130,9 +132,6 @@ func lz77(flush bool, table []uint16, mask uint32, historySize int, hist *histog
 	}
 	return offset, tokens
 }
-
-//go:linkname Prefetch runtime/internal/sys.Prefetch
-func Prefetch(addr uintptr)
 
 func compare(input []byte, prev, curr int, maxLength int) (match int) {
 	if maxLength < 8 {

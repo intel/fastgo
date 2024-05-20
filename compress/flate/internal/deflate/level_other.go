@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: BSD-3-Clause
 
 //go:build !amd64 || noasmtest
+// +build !amd64 noasmtest
 
 package deflate
 

@@ -37,6 +37,9 @@ func NewWriterwWith4KWindow(under io.Writer, level int) (w *Writer, err error) {
 }
 
 func NewWriterDict(under io.Writer, level int, dict []byte) (w *Writer, err error) {
+	if dict == nil {
+		return NewWriter(under, level)
+	}
 	w = &Writer{}
 	w.w, err = flate.NewWriterDict(under, level, dict)
 	if err != nil {

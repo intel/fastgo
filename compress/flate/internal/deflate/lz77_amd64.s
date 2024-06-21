@@ -564,7 +564,6 @@ large_len_tokens_loop:
 	MOVQ    $0x00000102, R10
 	CMPQ    R13, $0x00000102
 	CMOVQGT R10, R13
-	MOVQ    BX, R12
 	CMPQ    R13, $0x00000004
 	CMOVQLT R10, R13
 	JL      len_less_than_4
@@ -588,21 +587,22 @@ large_len_tokens_loop:
 
 len_less_than_4:
 	LEAQ -4(BX), R9
+	LEAQ -8(BX), R10
 
 update_4_hash:
-	MOVL   (AX)(R12*1), R10
-	MOVL   2(AX)(R12*1), R11
+	MOVL   (AX)(R10*1), R11
+	MOVL   2(AX)(R10*1), R12
 	XORQ   R13, R13
-	CRC32L R10, R13
+	CRC32L R11, R13
 	ANDL   $+4095, R13
-	XORQ   R10, R10
-	CRC32L R11, R10
-	ANDL   $+4095, R10
-	MOVW   R12, (R8)(R13*2)
-	ADDQ   $0x02, R12
-	MOVW   R12, (R8)(R10*2)
-	ADDQ   $0x02, R12
-	CMPQ   R12, R9
+	XORQ   R11, R11
+	CRC32L R12, R11
+	ANDL   $+4095, R11
+	MOVW   R10, (R8)(R13*2)
+	ADDQ   $0x02, R10
+	MOVW   R10, (R8)(R11*2)
+	ADDQ   $0x02, R10
+	CMPQ   R10, R9
 	JL     update_4_hash
 	CMPQ   BX, DX
 	JGE    input_end
@@ -1195,7 +1195,6 @@ large_len_tokens_loop:
 	MOVQ    $0x00000102, R10
 	CMPQ    R13, $0x00000102
 	CMOVQGT R10, R13
-	MOVQ    BX, R12
 	CMPQ    R13, $0x00000004
 	CMOVQLT R10, R13
 	JL      len_less_than_4
@@ -1219,21 +1218,22 @@ large_len_tokens_loop:
 
 len_less_than_4:
 	LEAQ -4(BX), R9
+	LEAQ -8(BX), R10
 
 update_4_hash:
-	MOVL   (AX)(R12*1), R10
-	MOVL   2(AX)(R12*1), R11
+	MOVL   (AX)(R10*1), R11
+	MOVL   2(AX)(R10*1), R12
 	XORQ   R13, R13
-	CRC32L R10, R13
+	CRC32L R11, R13
 	ANDL   $+4095, R13
-	XORQ   R10, R10
-	CRC32L R11, R10
-	ANDL   $+4095, R10
-	MOVW   R12, (R8)(R13*2)
-	ADDQ   $0x02, R12
-	MOVW   R12, (R8)(R10*2)
-	ADDQ   $0x02, R12
-	CMPQ   R12, R9
+	XORQ   R11, R11
+	CRC32L R12, R11
+	ANDL   $+4095, R11
+	MOVW   R10, (R8)(R13*2)
+	ADDQ   $0x02, R10
+	MOVW   R10, (R8)(R11*2)
+	ADDQ   $0x02, R10
+	CMPQ   R10, R9
 	JL     update_4_hash
 	CMPQ   BX, DX
 	JGE    input_end
@@ -1839,7 +1839,6 @@ large_len_tokens_loop:
 	MOVQ    $0x00000102, R10
 	CMPQ    R13, $0x00000102
 	CMOVQGT R10, R13
-	MOVQ    BX, R12
 	CMPQ    R13, $0x00000004
 	CMOVQLT R10, R13
 	JL      len_less_than_4
@@ -1863,21 +1862,22 @@ large_len_tokens_loop:
 
 len_less_than_4:
 	LEAQ -4(BX), R9
+	LEAQ -8(BX), R10
 
 update_4_hash:
-	MOVL   (AX)(R12*1), R10
-	MOVL   2(AX)(R12*1), R11
+	MOVL   (AX)(R10*1), R11
+	MOVL   2(AX)(R10*1), R12
 	XORQ   R13, R13
-	CRC32L R10, R13
+	CRC32L R11, R13
 	ANDL   $+4095, R13
-	XORQ   R10, R10
-	CRC32L R11, R10
-	ANDL   $+4095, R10
-	MOVW   R12, (R8)(R13*2)
-	ADDQ   $0x02, R12
-	MOVW   R12, (R8)(R10*2)
-	ADDQ   $0x02, R12
-	CMPQ   R12, R9
+	XORQ   R11, R11
+	CRC32L R12, R11
+	ANDL   $+4095, R11
+	MOVW   R10, (R8)(R13*2)
+	ADDQ   $0x02, R10
+	MOVW   R10, (R8)(R11*2)
+	ADDQ   $0x02, R10
+	CMPQ   R10, R9
 	JL     update_4_hash
 	CMPQ   BX, DX
 	JGE    input_end
@@ -2483,7 +2483,6 @@ large_len_tokens_loop:
 	MOVQ    $0x00000102, R10
 	CMPQ    R13, $0x00000102
 	CMOVQGT R10, R13
-	MOVQ    BX, R12
 	CMPQ    R13, $0x00000004
 	CMOVQLT R10, R13
 	JL      len_less_than_4
@@ -2507,21 +2506,22 @@ large_len_tokens_loop:
 
 len_less_than_4:
 	LEAQ -4(BX), R9
+	LEAQ -8(BX), R10
 
 update_4_hash:
-	MOVL   (AX)(R12*1), R10
-	MOVL   2(AX)(R12*1), R11
+	MOVL   (AX)(R10*1), R11
+	MOVL   2(AX)(R10*1), R12
 	XORQ   R13, R13
-	CRC32L R10, R13
+	CRC32L R11, R13
 	ANDL   $+4095, R13
-	XORQ   R10, R10
-	CRC32L R11, R10
-	ANDL   $+4095, R10
-	MOVW   R12, (R8)(R13*2)
-	ADDQ   $0x02, R12
-	MOVW   R12, (R8)(R10*2)
-	ADDQ   $0x02, R12
-	CMPQ   R12, R9
+	XORQ   R11, R11
+	CRC32L R12, R11
+	ANDL   $+4095, R11
+	MOVW   R10, (R8)(R13*2)
+	ADDQ   $0x02, R10
+	MOVW   R10, (R8)(R11*2)
+	ADDQ   $0x02, R10
+	CMPQ   R10, R9
 	JL     update_4_hash
 	CMPQ   BX, DX
 	JGE    input_end
@@ -3100,7 +3100,6 @@ large_len_tokens_loop:
 	MOVQ    $0x00000102, R10
 	CMPQ    R13, $0x00000102
 	CMOVQGT R10, R13
-	MOVQ    BX, R12
 	CMPQ    R13, $0x00000004
 	CMOVQLT R10, R13
 	JL      len_less_than_4
@@ -3124,21 +3123,22 @@ large_len_tokens_loop:
 
 len_less_than_4:
 	LEAQ -4(BX), R9
+	LEAQ -8(BX), R10
 
 update_4_hash:
-	MOVL   (AX)(R12*1), R10
-	MOVL   2(AX)(R12*1), R11
+	MOVL   (AX)(R10*1), R11
+	MOVL   2(AX)(R10*1), R12
 	XORQ   R13, R13
-	CRC32L R10, R13
+	CRC32L R11, R13
 	ANDL   $+4095, R13
-	XORQ   R10, R10
-	CRC32L R11, R10
-	ANDL   $+4095, R10
-	MOVW   R12, (R8)(R13*2)
-	ADDQ   $0x02, R12
-	MOVW   R12, (R8)(R10*2)
-	ADDQ   $0x02, R12
-	CMPQ   R12, R9
+	XORQ   R11, R11
+	CRC32L R12, R11
+	ANDL   $+4095, R11
+	MOVW   R10, (R8)(R13*2)
+	ADDQ   $0x02, R10
+	MOVW   R10, (R8)(R11*2)
+	ADDQ   $0x02, R10
+	CMPQ   R10, R9
 	JL     update_4_hash
 	CMPQ   BX, DX
 	JGE    input_end
@@ -3717,7 +3717,6 @@ large_len_tokens_loop:
 	MOVQ    $0x00000102, R10
 	CMPQ    R13, $0x00000102
 	CMOVQGT R10, R13
-	MOVQ    BX, R12
 	CMPQ    R13, $0x00000004
 	CMOVQLT R10, R13
 	JL      len_less_than_4
@@ -3741,21 +3740,22 @@ large_len_tokens_loop:
 
 len_less_than_4:
 	LEAQ -4(BX), R9
+	LEAQ -8(BX), R10
 
 update_4_hash:
-	MOVL   (AX)(R12*1), R10
-	MOVL   2(AX)(R12*1), R11
+	MOVL   (AX)(R10*1), R11
+	MOVL   2(AX)(R10*1), R12
 	XORQ   R13, R13
-	CRC32L R10, R13
+	CRC32L R11, R13
 	ANDL   $+4095, R13
-	XORQ   R10, R10
-	CRC32L R11, R10
-	ANDL   $+4095, R10
-	MOVW   R12, (R8)(R13*2)
-	ADDQ   $0x02, R12
-	MOVW   R12, (R8)(R10*2)
-	ADDQ   $0x02, R12
-	CMPQ   R12, R9
+	XORQ   R11, R11
+	CRC32L R12, R11
+	ANDL   $+4095, R11
+	MOVW   R10, (R8)(R13*2)
+	ADDQ   $0x02, R10
+	MOVW   R10, (R8)(R11*2)
+	ADDQ   $0x02, R10
+	CMPQ   R10, R9
 	JL     update_4_hash
 	CMPQ   BX, DX
 	JGE    input_end
@@ -4348,7 +4348,6 @@ large_len_tokens_loop:
 	MOVQ    $0x00000102, R10
 	CMPQ    R13, $0x00000102
 	CMOVQGT R10, R13
-	MOVQ    BX, R12
 	CMPQ    R13, $0x00000004
 	CMOVQLT R10, R13
 	JL      len_less_than_4
@@ -4372,21 +4371,22 @@ large_len_tokens_loop:
 
 len_less_than_4:
 	LEAQ -4(BX), R9
+	LEAQ -8(BX), R10
 
 update_4_hash:
-	MOVL   (AX)(R12*1), R10
-	MOVL   2(AX)(R12*1), R11
+	MOVL   (AX)(R10*1), R11
+	MOVL   2(AX)(R10*1), R12
 	XORQ   R13, R13
-	CRC32L R10, R13
+	CRC32L R11, R13
 	ANDL   $+32767, R13
-	XORQ   R10, R10
-	CRC32L R11, R10
-	ANDL   $+32767, R10
-	MOVW   R12, (R8)(R13*2)
-	ADDQ   $0x02, R12
-	MOVW   R12, (R8)(R10*2)
-	ADDQ   $0x02, R12
-	CMPQ   R12, R9
+	XORQ   R11, R11
+	CRC32L R12, R11
+	ANDL   $+32767, R11
+	MOVW   R10, (R8)(R13*2)
+	ADDQ   $0x02, R10
+	MOVW   R10, (R8)(R11*2)
+	ADDQ   $0x02, R10
+	CMPQ   R10, R9
 	JL     update_4_hash
 	CMPQ   BX, DX
 	JGE    input_end
@@ -4979,7 +4979,6 @@ large_len_tokens_loop:
 	MOVQ    $0x00000102, R10
 	CMPQ    R13, $0x00000102
 	CMOVQGT R10, R13
-	MOVQ    BX, R12
 	CMPQ    R13, $0x00000004
 	CMOVQLT R10, R13
 	JL      len_less_than_4
@@ -5003,21 +5002,22 @@ large_len_tokens_loop:
 
 len_less_than_4:
 	LEAQ -4(BX), R9
+	LEAQ -8(BX), R10
 
 update_4_hash:
-	MOVL   (AX)(R12*1), R10
-	MOVL   2(AX)(R12*1), R11
+	MOVL   (AX)(R10*1), R11
+	MOVL   2(AX)(R10*1), R12
 	XORQ   R13, R13
-	CRC32L R10, R13
+	CRC32L R11, R13
 	ANDL   $+32767, R13
-	XORQ   R10, R10
-	CRC32L R11, R10
-	ANDL   $+32767, R10
-	MOVW   R12, (R8)(R13*2)
-	ADDQ   $0x02, R12
-	MOVW   R12, (R8)(R10*2)
-	ADDQ   $0x02, R12
-	CMPQ   R12, R9
+	XORQ   R11, R11
+	CRC32L R12, R11
+	ANDL   $+32767, R11
+	MOVW   R10, (R8)(R13*2)
+	ADDQ   $0x02, R10
+	MOVW   R10, (R8)(R11*2)
+	ADDQ   $0x02, R10
+	CMPQ   R10, R9
 	JL     update_4_hash
 	CMPQ   BX, DX
 	JGE    input_end
@@ -5623,7 +5623,6 @@ large_len_tokens_loop:
 	MOVQ    $0x00000102, R10
 	CMPQ    R13, $0x00000102
 	CMOVQGT R10, R13
-	MOVQ    BX, R12
 	CMPQ    R13, $0x00000004
 	CMOVQLT R10, R13
 	JL      len_less_than_4
@@ -5647,21 +5646,22 @@ large_len_tokens_loop:
 
 len_less_than_4:
 	LEAQ -4(BX), R9
+	LEAQ -8(BX), R10
 
 update_4_hash:
-	MOVL   (AX)(R12*1), R10
-	MOVL   2(AX)(R12*1), R11
+	MOVL   (AX)(R10*1), R11
+	MOVL   2(AX)(R10*1), R12
 	XORQ   R13, R13
-	CRC32L R10, R13
+	CRC32L R11, R13
 	ANDL   $+32767, R13
-	XORQ   R10, R10
-	CRC32L R11, R10
-	ANDL   $+32767, R10
-	MOVW   R12, (R8)(R13*2)
-	ADDQ   $0x02, R12
-	MOVW   R12, (R8)(R10*2)
-	ADDQ   $0x02, R12
-	CMPQ   R12, R9
+	XORQ   R11, R11
+	CRC32L R12, R11
+	ANDL   $+32767, R11
+	MOVW   R10, (R8)(R13*2)
+	ADDQ   $0x02, R10
+	MOVW   R10, (R8)(R11*2)
+	ADDQ   $0x02, R10
+	CMPQ   R10, R9
 	JL     update_4_hash
 	CMPQ   BX, DX
 	JGE    input_end
@@ -6267,7 +6267,6 @@ large_len_tokens_loop:
 	MOVQ    $0x00000102, R10
 	CMPQ    R13, $0x00000102
 	CMOVQGT R10, R13
-	MOVQ    BX, R12
 	CMPQ    R13, $0x00000004
 	CMOVQLT R10, R13
 	JL      len_less_than_4
@@ -6291,21 +6290,22 @@ large_len_tokens_loop:
 
 len_less_than_4:
 	LEAQ -4(BX), R9
+	LEAQ -8(BX), R10
 
 update_4_hash:
-	MOVL   (AX)(R12*1), R10
-	MOVL   2(AX)(R12*1), R11
+	MOVL   (AX)(R10*1), R11
+	MOVL   2(AX)(R10*1), R12
 	XORQ   R13, R13
-	CRC32L R10, R13
+	CRC32L R11, R13
 	ANDL   $+32767, R13
-	XORQ   R10, R10
-	CRC32L R11, R10
-	ANDL   $+32767, R10
-	MOVW   R12, (R8)(R13*2)
-	ADDQ   $0x02, R12
-	MOVW   R12, (R8)(R10*2)
-	ADDQ   $0x02, R12
-	CMPQ   R12, R9
+	XORQ   R11, R11
+	CRC32L R12, R11
+	ANDL   $+32767, R11
+	MOVW   R10, (R8)(R13*2)
+	ADDQ   $0x02, R10
+	MOVW   R10, (R8)(R11*2)
+	ADDQ   $0x02, R10
+	CMPQ   R10, R9
 	JL     update_4_hash
 	CMPQ   BX, DX
 	JGE    input_end
@@ -6884,7 +6884,6 @@ large_len_tokens_loop:
 	MOVQ    $0x00000102, R10
 	CMPQ    R13, $0x00000102
 	CMOVQGT R10, R13
-	MOVQ    BX, R12
 	CMPQ    R13, $0x00000004
 	CMOVQLT R10, R13
 	JL      len_less_than_4
@@ -6908,21 +6907,22 @@ large_len_tokens_loop:
 
 len_less_than_4:
 	LEAQ -4(BX), R9
+	LEAQ -8(BX), R10
 
 update_4_hash:
-	MOVL   (AX)(R12*1), R10
-	MOVL   2(AX)(R12*1), R11
+	MOVL   (AX)(R10*1), R11
+	MOVL   2(AX)(R10*1), R12
 	XORQ   R13, R13
-	CRC32L R10, R13
+	CRC32L R11, R13
 	ANDL   $+32767, R13
-	XORQ   R10, R10
-	CRC32L R11, R10
-	ANDL   $+32767, R10
-	MOVW   R12, (R8)(R13*2)
-	ADDQ   $0x02, R12
-	MOVW   R12, (R8)(R10*2)
-	ADDQ   $0x02, R12
-	CMPQ   R12, R9
+	XORQ   R11, R11
+	CRC32L R12, R11
+	ANDL   $+32767, R11
+	MOVW   R10, (R8)(R13*2)
+	ADDQ   $0x02, R10
+	MOVW   R10, (R8)(R11*2)
+	ADDQ   $0x02, R10
+	CMPQ   R10, R9
 	JL     update_4_hash
 	CMPQ   BX, DX
 	JGE    input_end
@@ -7501,7 +7501,6 @@ large_len_tokens_loop:
 	MOVQ    $0x00000102, R10
 	CMPQ    R13, $0x00000102
 	CMOVQGT R10, R13
-	MOVQ    BX, R12
 	CMPQ    R13, $0x00000004
 	CMOVQLT R10, R13
 	JL      len_less_than_4
@@ -7525,21 +7524,22 @@ large_len_tokens_loop:
 
 len_less_than_4:
 	LEAQ -4(BX), R9
+	LEAQ -8(BX), R10
 
 update_4_hash:
-	MOVL   (AX)(R12*1), R10
-	MOVL   2(AX)(R12*1), R11
+	MOVL   (AX)(R10*1), R11
+	MOVL   2(AX)(R10*1), R12
 	XORQ   R13, R13
-	CRC32L R10, R13
+	CRC32L R11, R13
 	ANDL   $+32767, R13
-	XORQ   R10, R10
-	CRC32L R11, R10
-	ANDL   $+32767, R10
-	MOVW   R12, (R8)(R13*2)
-	ADDQ   $0x02, R12
-	MOVW   R12, (R8)(R10*2)
-	ADDQ   $0x02, R12
-	CMPQ   R12, R9
+	XORQ   R11, R11
+	CRC32L R12, R11
+	ANDL   $+32767, R11
+	MOVW   R10, (R8)(R13*2)
+	ADDQ   $0x02, R10
+	MOVW   R10, (R8)(R11*2)
+	ADDQ   $0x02, R10
+	CMPQ   R10, R9
 	JL     update_4_hash
 	CMPQ   BX, DX
 	JGE    input_end

@@ -61,7 +61,7 @@ const (
 	// COPY_LEN_MAX = 0
 	// SLOPs here are designed to avoid branches
 	// So we can use `movdqu xmm` without lots of jumps, and load full 64 bits each time .
-	inBufferSlop  = 8
+	inBufferSlop  = 8 * 3
 	copySize      = 16
 	outBufferSlop = copySize + copyLenMax
 )

@@ -557,6 +557,8 @@ large_len_tokens_loop:
 
 	// len -= 258
 	SUBQ $+258, R13
+	CMPQ SI, DI
+	JGE  len_less_than_4
 
 	// }while(len >= (258 + 4))
 	CMPQ    R13, $0x00000106
@@ -565,7 +567,6 @@ large_len_tokens_loop:
 	CMPQ    R13, $0x00000102
 	CMOVQGT R10, R13
 	CMPQ    R13, $0x00000004
-	CMOVQLT R10, R13
 	JL      len_less_than_4
 
 	// distCode |= len
@@ -1188,6 +1189,8 @@ large_len_tokens_loop:
 
 	// len -= 258
 	SUBQ $+258, R13
+	CMPQ SI, DI
+	JGE  len_less_than_4
 
 	// }while(len >= (258 + 4))
 	CMPQ    R13, $0x00000106
@@ -1196,7 +1199,6 @@ large_len_tokens_loop:
 	CMPQ    R13, $0x00000102
 	CMOVQGT R10, R13
 	CMPQ    R13, $0x00000004
-	CMOVQLT R10, R13
 	JL      len_less_than_4
 
 	// distCode |= len
@@ -1832,6 +1834,8 @@ large_len_tokens_loop:
 
 	// len -= 258
 	SUBQ $+258, R13
+	CMPQ SI, DI
+	JGE  len_less_than_4
 
 	// }while(len >= (258 + 4))
 	CMPQ    R13, $0x00000106
@@ -1840,7 +1844,6 @@ large_len_tokens_loop:
 	CMPQ    R13, $0x00000102
 	CMOVQGT R10, R13
 	CMPQ    R13, $0x00000004
-	CMOVQLT R10, R13
 	JL      len_less_than_4
 
 	// distCode |= len
@@ -2476,6 +2479,8 @@ large_len_tokens_loop:
 
 	// len -= 258
 	SUBQ $+258, R13
+	CMPQ SI, DI
+	JGE  len_less_than_4
 
 	// }while(len >= (258 + 4))
 	CMPQ    R13, $0x00000106
@@ -2484,7 +2489,6 @@ large_len_tokens_loop:
 	CMPQ    R13, $0x00000102
 	CMOVQGT R10, R13
 	CMPQ    R13, $0x00000004
-	CMOVQLT R10, R13
 	JL      len_less_than_4
 
 	// distCode |= len
@@ -3093,6 +3097,8 @@ large_len_tokens_loop:
 
 	// len -= 258
 	SUBQ $+258, R13
+	CMPQ SI, DI
+	JGE  len_less_than_4
 
 	// }while(len >= (258 + 4))
 	CMPQ    R13, $0x00000106
@@ -3101,7 +3107,6 @@ large_len_tokens_loop:
 	CMPQ    R13, $0x00000102
 	CMOVQGT R10, R13
 	CMPQ    R13, $0x00000004
-	CMOVQLT R10, R13
 	JL      len_less_than_4
 
 	// distCode |= len
@@ -3710,6 +3715,8 @@ large_len_tokens_loop:
 
 	// len -= 258
 	SUBQ $+258, R13
+	CMPQ SI, DI
+	JGE  len_less_than_4
 
 	// }while(len >= (258 + 4))
 	CMPQ    R13, $0x00000106
@@ -3718,7 +3725,6 @@ large_len_tokens_loop:
 	CMPQ    R13, $0x00000102
 	CMOVQGT R10, R13
 	CMPQ    R13, $0x00000004
-	CMOVQLT R10, R13
 	JL      len_less_than_4
 
 	// distCode |= len
@@ -4341,6 +4347,8 @@ large_len_tokens_loop:
 
 	// len -= 258
 	SUBQ $+258, R13
+	CMPQ SI, DI
+	JGE  len_less_than_4
 
 	// }while(len >= (258 + 4))
 	CMPQ    R13, $0x00000106
@@ -4349,7 +4357,6 @@ large_len_tokens_loop:
 	CMPQ    R13, $0x00000102
 	CMOVQGT R10, R13
 	CMPQ    R13, $0x00000004
-	CMOVQLT R10, R13
 	JL      len_less_than_4
 
 	// distCode |= len
@@ -4972,6 +4979,8 @@ large_len_tokens_loop:
 
 	// len -= 258
 	SUBQ $+258, R13
+	CMPQ SI, DI
+	JGE  len_less_than_4
 
 	// }while(len >= (258 + 4))
 	CMPQ    R13, $0x00000106
@@ -4980,7 +4989,6 @@ large_len_tokens_loop:
 	CMPQ    R13, $0x00000102
 	CMOVQGT R10, R13
 	CMPQ    R13, $0x00000004
-	CMOVQLT R10, R13
 	JL      len_less_than_4
 
 	// distCode |= len
@@ -5616,6 +5624,8 @@ large_len_tokens_loop:
 
 	// len -= 258
 	SUBQ $+258, R13
+	CMPQ SI, DI
+	JGE  len_less_than_4
 
 	// }while(len >= (258 + 4))
 	CMPQ    R13, $0x00000106
@@ -5624,7 +5634,6 @@ large_len_tokens_loop:
 	CMPQ    R13, $0x00000102
 	CMOVQGT R10, R13
 	CMPQ    R13, $0x00000004
-	CMOVQLT R10, R13
 	JL      len_less_than_4
 
 	// distCode |= len
@@ -6260,6 +6269,8 @@ large_len_tokens_loop:
 
 	// len -= 258
 	SUBQ $+258, R13
+	CMPQ SI, DI
+	JGE  len_less_than_4
 
 	// }while(len >= (258 + 4))
 	CMPQ    R13, $0x00000106
@@ -6268,7 +6279,6 @@ large_len_tokens_loop:
 	CMPQ    R13, $0x00000102
 	CMOVQGT R10, R13
 	CMPQ    R13, $0x00000004
-	CMOVQLT R10, R13
 	JL      len_less_than_4
 
 	// distCode |= len
@@ -6877,6 +6887,8 @@ large_len_tokens_loop:
 
 	// len -= 258
 	SUBQ $+258, R13
+	CMPQ SI, DI
+	JGE  len_less_than_4
 
 	// }while(len >= (258 + 4))
 	CMPQ    R13, $0x00000106
@@ -6885,7 +6897,6 @@ large_len_tokens_loop:
 	CMPQ    R13, $0x00000102
 	CMOVQGT R10, R13
 	CMPQ    R13, $0x00000004
-	CMOVQLT R10, R13
 	JL      len_less_than_4
 
 	// distCode |= len
@@ -7494,6 +7505,8 @@ large_len_tokens_loop:
 
 	// len -= 258
 	SUBQ $+258, R13
+	CMPQ SI, DI
+	JGE  len_less_than_4
 
 	// }while(len >= (258 + 4))
 	CMPQ    R13, $0x00000106
@@ -7502,7 +7515,6 @@ large_len_tokens_loop:
 	CMPQ    R13, $0x00000102
 	CMOVQGT R10, R13
 	CMPQ    R13, $0x00000004
-	CMOVQLT R10, R13
 	JL      len_less_than_4
 
 	// distCode |= len

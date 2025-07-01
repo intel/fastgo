@@ -1,6 +1,9 @@
 // Copyright (c) 2024, Intel Corporation.
 // SPDX-License-Identifier: BSD-3-Clause
 
+// This file implements DEFLATE header parsing and Huffman table construction
+// for Intel-optimized decompression. It handles both static and dynamic
+// Huffman block headers as specified in RFC 1951.
 package flate
 
 import (
@@ -8,24 +11,29 @@ import (
 	"math/bits"
 )
 
+// Huffman table lookup constants
 const (
-	litLenLookupBits = 12
-	distLookupBits   = 10
+	litLenLookupBits = 12 // Bits used for literal/length table lookup
+	distLookupBits   = 10 // Bits used for distance table lookup
 
-	invalidSymbolValue = 0x1FFF
-	invalidCodeValue   = 0xFFFFFF
+	invalidSymbolValue = 0x1FFF   // Marker for invalid symbol
+	invalidCodeValue   = 0xFFFFFF // Marker for invalid code
 )
 
+// setupStaticHeader configures the decompressor for a static Huffman block.
+// Static blocks use predefined Huffman tables as specified in RFC 1951.
 func (state *inflate) setupStaticHeader() {
-	state.litLenTable = staticLitHuffCode
-	state.distTable = staticDistHuffCode
-	state.phase = phaseHeaderDecoded
+	state.litLenTable = staticLitHuffCode // Use predefined literal/length table
+	state.distTable = staticDistHuffCode  // Use predefined distance table
+	state.phase = phaseHeaderDecoded      // Move to data decompression phase
 }
 
+// codeLenCodes processes the code length codes section of a dynamic Huffman header.
+// This builds the Huffman table used to decode the main literal/length and distance tables.
 func (state *inflate) codeLenCodes(hclen int) error {
 	var codeHuff [codeLenCodes]huffCode
 	var codeCount [16]uint16
-	// /* This order is defined in RFC 1951 page 13 */
+	// Code length order as defined in RFC 1951 section 3.2.7
 	codeLengthOrder := [codeLenCodes]uint8{
 		0x10, 0x11, 0x12, 0x00, 0x08, 0x07, 0x09, 0x06,
 		0x0a, 0x05, 0x0b, 0x04, 0x0c, 0x03, 0x0d, 0x02, 0x0e, 0x01, 0x0f,

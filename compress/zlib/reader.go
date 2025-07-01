@@ -3,11 +3,13 @@
 // license that can be found in the LICENSE file.
 
 /*
-Package zlib implements reading and writing of zlib format compressed data,
-as specified in RFC 1950.
+Package zlib implements Intel-optimized reading and writing of zlib format compressed data,
+as specified in RFC 1950. This package uses Intel-optimized DEFLATE compression from
+the flate package to provide enhanced performance on Intel architectures while maintaining
+full compatibility with the standard zlib format.
 
 The implementation provides filters that uncompress during reading
-and compress during writing.  For example, to write compressed data
+and compress during writing. For example, to write compressed data
 to a buffer:
 
 	var b bytes.Buffer
@@ -34,11 +36,13 @@ import (
 	"github.com/intel/fastgo/compress/flate"
 )
 
+// ZLIB format constants as defined in RFC 1950
 const (
-	zlibDeflate   = 8
-	zlibMaxWindow = 7
+	zlibDeflate   = 8 // Compression method: DEFLATE
+	zlibMaxWindow = 7 // Maximum window size field value
 )
 
+// Error definitions for zlib operations
 var (
 	// ErrChecksum is returned when reading ZLIB data that has an invalid checksum.
 	ErrChecksum = errors.New("zlib: invalid checksum")

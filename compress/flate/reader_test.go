@@ -2,6 +2,9 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
+// This file contains tests for the Intel-optimized DEFLATE reader implementation.
+// It verifies compatibility with standard library behavior and tests edge cases
+// specific to the optimized decompression algorithms.
 package flate
 
 import (
@@ -15,6 +18,8 @@ import (
 	"testing"
 )
 
+// TestNlitOutOfRange tests handling of invalid DEFLATE data with out-of-range nlit values.
+// This ensures the Intel-optimized decoder properly handles malformed input without panicking.
 func TestNlitOutOfRange(t *testing.T) {
 	// Trying to decode this bogus flate data, which has a Huffman table
 	// with nlit=288, should not panic.
@@ -24,6 +29,7 @@ func TestNlitOutOfRange(t *testing.T) {
 			"\x75\xc4\xf8\x0f\x12\x11\xb9\xb4\x4b\x09\xa0\xbe\x8b\x91\x4c")))
 }
 
+// Test suites for various data types to ensure compression/decompression accuracy
 var suites = []struct{ name, file string }{
 	// Digits is the digits of the irrational number e. Its decimal representation
 	// does not repeat, but there are only 10 possible digits, so it should be

@@ -7,27 +7,34 @@ import (
 	"encoding/binary"
 )
 
+// inflate represents the internal state of the Intel-optimized DEFLATE decompressor.
+// It maintains all necessary state for streaming decompression including bit buffers,
+// Huffman tables, and block processing state.
 type inflate struct {
-	input   []byte
-	bits    uint64 // Bits buffered to handle unaligned streams
-	bitsLen int32  // Bits in readIn
+	input   []byte // Input data buffer
+	bits    uint64 // Bit buffer for handling unaligned bit streams
+	bitsLen int32  // Number of valid bits in the bit buffer
 
-	writeOverflowLits    int32
-	writeOverflowLen     int32
-	copyOverflowLength   int32
-	copyOverflowDistance int32
-	litLenTable          largeHuffCodeTable
-	distTable            smallHuffCodeTable
+	// Overflow handling for output generation
+	writeOverflowLits    int32 // Literal overflow count
+	writeOverflowLen     int32 // Length overflow count
+	copyOverflowLength   int32 // Copy length overflow
+	copyOverflowDistance int32 // Copy distance overflow
 
-	phase          int32  // Current decompression state
-	bfinal         uint32 // Flag identifying final block
-	litBlockLength int
+	// Huffman decoding tables for literals/lengths and distances
+	litLenTable largeHuffCodeTable // Table for literal/length symbols (larger symbol space)
+	distTable   smallHuffCodeTable // Table for distance symbols (smaller symbol space)
 
-	headerBuffered int16               // Number of bytes in tmpInBuffer
-	headerBuffer   [328]uint8          // Temporary buffer to accumulate data for decoding the header
-	dynHdr         dynamicHeaderReader // temp objects for processing header
+	phase          int32  // Current decompression phase/state
+	bfinal         uint32 // DEFLATE block final flag (1 if last block)
+	litBlockLength int    // Length of literal (uncompressed) block
 
-	roffset int64
+	// Header processing buffers and state
+	headerBuffered int16               // Number of bytes accumulated in header buffer
+	headerBuffer   [328]uint8          // Temporary buffer for header data accumulation
+	dynHdr         dynamicHeaderReader // Dynamic header processing context
+
+	roffset int64 // Read offset for position tracking
 }
 
 type dynamicHeaderReader struct {

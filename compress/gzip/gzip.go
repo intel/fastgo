@@ -2,6 +2,10 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
+// Package gzip provides Intel-optimized reading and writing of gzip format compressed files,
+// as specified in RFC 1952. This package uses Intel-optimized DEFLATE compression
+// from the flate package to provide enhanced performance on Intel architectures
+// while maintaining full compatibility with the standard gzip format.
 package gzip
 
 import (
@@ -14,33 +18,35 @@ import (
 	"github.com/intel/fastgo/compress/flate"
 )
 
-// These constants are copied from the flate package, so that code that imports
-// "compress/gzip" does not also have to import "compress/flate".
+// Compression level constants copied from the flate package for convenience.
+// These allow gzip users to specify compression levels without importing flate.
 const (
-	NoCompression      = flate.NoCompression
-	BestSpeed          = flate.BestSpeed
-	BestCompression    = flate.BestCompression
-	DefaultCompression = flate.DefaultCompression
-	HuffmanOnly        = flate.HuffmanOnly
+	NoCompression      = flate.NoCompression      // No compression
+	BestSpeed          = flate.BestSpeed          // Level 1: fastest compression
+	BestCompression    = flate.BestCompression    // Level 9: best compression ratio
+	DefaultCompression = flate.DefaultCompression // Default compression level
+	HuffmanOnly        = flate.HuffmanOnly        // Huffman-only compression
 )
 
-// A Writer is an io.WriteCloser.
-// Writes to a Writer are compressed and written to w.
+// Writer is an io.WriteCloser that compresses data using Intel-optimized gzip format.
+// It writes the gzip header on the first call to Write, Flush, or Close.
+// The Header field can be modified before the first write to customize the gzip header.
 type Writer struct {
-	Header      // written at first call to Write, Flush, or Close
-	w           io.Writer
-	level       int
-	wroteHeader bool
-	compressor  *flate.Writer
-	digest      uint32 // CRC-32, IEEE polynomial (section 8)
-	size        uint32 // Uncompressed size (section 2.3.1)
-	closed      bool
-	buf         [10]byte
-	err         error
+	Header                    // Gzip file header written at first call to Write, Flush, or Close
+	w           io.Writer     // Underlying writer
+	level       int           // Compression level
+	wroteHeader bool          // Whether header has been written
+	compressor  *flate.Writer // Intel-optimized DEFLATE compressor
+	digest      uint32        // CRC-32 checksum, IEEE polynomial (section 8)
+	size        uint32        // Uncompressed size (section 2.3.1)
+	closed      bool          // Whether writer has been closed
+	buf         [10]byte      // Temporary buffer for header/footer
+	err         error         // Last error encountered
 }
 
-// NewWriter returns a new Writer.
-// Writes to the returned writer are compressed and written to w.
+// NewWriter creates a new Intel-optimized gzip Writer.
+// The Writer compresses data using Intel-optimized DEFLATE and writes it to w.
+// The compression automatically benefits from Intel optimizations when available.
 //
 // It is the caller's responsibility to call Close on the Writer when done.
 // Writes may be buffered and not flushed until Close.

@@ -4,8 +4,13 @@
 //go:build !amd64 || noasmtest
 // +build !amd64 noasmtest
 
+// This file provides fallback implementations for non-AMD64 architectures
+// or when assembly tests are disabled. It ensures the package works on all
+// platforms while Intel optimizations are only available on supported hardware.
 package deflate
 
+// init sets up the standard encoding function for non-optimized platforms.
+// This ensures consistent behavior across all supported architectures.
 func init() {
 	optimizedEncodeBytes = encodeBytes
 }

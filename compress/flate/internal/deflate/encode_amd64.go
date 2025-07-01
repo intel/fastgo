@@ -4,6 +4,9 @@
 //go:build amd64 && !noasmtest
 // +build amd64,!noasmtest
 
+// This file contains Intel AMD64-specific optimizations for token encoding.
+// It provides assembly-accelerated implementations for encoding LZ77 tokens
+// into DEFLATE bit streams with optimal performance on different Intel architectures.
 package deflate
 
 import (
@@ -12,19 +15,23 @@ import (
 	"github.com/intel/fastgo/internal/cpu"
 )
 
-func encodeTokensArchV4(hist *histogram, tokens []token, buf *BitBuf) int
-func encodeTokensArchV3(hist *histogram, tokens []token, buf *BitBuf) int
+// Assembly implementations for different Intel architecture levels
+func encodeTokensArchV4(hist *histogram, tokens []token, buf *BitBuf) int // Level 4 optimizations
+func encodeTokensArchV3(hist *histogram, tokens []token, buf *BitBuf) int // Level 3 optimizations
 
+// asmTokenEncoder holds the selected assembly implementation based on CPU capabilities
 var asmTokenEncoder func(hist *histogram, tokens []token, buf *BitBuf) int
 
+// init selects the optimal token encoder implementation based on detected CPU architecture.
+// Higher architecture levels provide better performance through advanced instruction sets.
 func init() {
 	switch cpu.ArchLevel {
 	case 3:
-		asmTokenEncoder = encodeTokensArchV3
+		asmTokenEncoder = encodeTokensArchV3 // Use Level 3 optimizations
 	case 4:
-		asmTokenEncoder = encodeTokensArchV4
+		asmTokenEncoder = encodeTokensArchV4 // Use Level 4 optimizations (highest performance)
 	default:
-		asmTokenEncoder = encodeTokens
+		asmTokenEncoder = encodeTokens // Fall back to standard implementation
 	}
 }
 

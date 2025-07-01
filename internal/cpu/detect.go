@@ -6,6 +6,8 @@
 
 package cpu
 
+// cpuArchLevel returns 0 for non-AMD64 architectures or when assembly tests are disabled.
+// This ensures that Intel-specific optimizations are only available on supported platforms.
 func cpuArchLevel() int {
 	return 0
 }

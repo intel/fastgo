@@ -4,6 +4,9 @@
 //go:build amd64 && !noasmtest
 // +build amd64,!noasmtest
 
+// This file contains Intel AMD64-specific optimizations for Huffman-only compression.
+// It provides assembly-accelerated implementations that are automatically selected
+// based on the detected CPU architecture level.
 package deflate
 
 import (
@@ -12,20 +15,27 @@ import (
 	"github.com/intel/fastgo/internal/cpu"
 )
 
+// init sets up the optimized encoding function based on CPU capabilities.
+// It selects the appropriate assembly implementation for maximum performance.
 func init() {
 	optimizedEncodeBytes = func(hist *histogram, data []byte, buf *BitBuf) (num int) {
 		switch cpu.ArchLevel {
 		case 4:
+			// Use Level 4 architecture optimizations (highest performance)
 			num += encodeHuffmansArchV4(hist, data, buf)
 		}
+		// Fall back to standard implementation for remaining data
 		num += encodeBytes(hist, data[num:], buf)
 		return num
 	}
 }
 
+// encodeBytes provides the fallback Huffman encoding implementation.
+// This is used when assembly optimizations are not available or for remaining
+// data after optimized processing.
 func encodeBytes(hist *histogram, data []byte, buf *BitBuf) (num int) {
-	// max bits write per loop = (15 + 15 + 5 + 13 ) = 48
-	// 48 / 8 = 6
+	// Maximum bits written per loop iteration = (15 + 15 + 5 + 13) = 48 bits
+	// This ensures we don't overflow the bit buffer (48 / 8 = 6 bytes maximum)
 	buf.Sync()
 	output := buf.output
 	end := len(output) - 16

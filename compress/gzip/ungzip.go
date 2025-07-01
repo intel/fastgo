@@ -1,11 +1,12 @@
-package gzip
-
 // Copyright 2009 The Go Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-// Package gzip implements reading and writing of gzip format compressed files,
-// as specified in RFC 1952.
+// Package gzip implements Intel-optimized reading and writing of gzip format compressed files,
+// as specified in RFC 1952. This implementation uses Intel-optimized DEFLATE decompression
+// to provide enhanced performance on Intel architectures while maintaining full compatibility
+// with the standard gzip format.
+package gzip
 
 import (
 	"bufio"
@@ -18,17 +19,19 @@ import (
 	"github.com/intel/fastgo/compress/flate"
 )
 
+// GZIP format constants as defined in RFC 1952
 const (
-	gzipID1     = 0x1f
-	gzipID2     = 0x8b
-	gzipDeflate = 8
-	flagText    = 1 << 0
-	flagHdrCrc  = 1 << 1
-	flagExtra   = 1 << 2
-	flagName    = 1 << 3
-	flagComment = 1 << 4
+	gzipID1     = 0x1f   // First magic byte of gzip header
+	gzipID2     = 0x8b   // Second magic byte of gzip header
+	gzipDeflate = 8      // Compression method: DEFLATE
+	flagText    = 1 << 0 // Text flag bit
+	flagHdrCrc  = 1 << 1 // Header CRC flag bit
+	flagExtra   = 1 << 2 // Extra field flag bit
+	flagName    = 1 << 3 // Original file name flag bit
+	flagComment = 1 << 4 // Comment flag bit
 )
 
+// Error definitions for gzip operations
 var (
 	// ErrChecksum is returned when reading GZIP data that has an invalid checksum.
 	ErrChecksum = errors.New("gzip: invalid checksum")
@@ -36,9 +39,11 @@ var (
 	ErrHeader = errors.New("gzip: invalid header")
 )
 
+// Little-endian binary encoder/decoder
 var le = binary.LittleEndian
 
-// noEOF converts io.EOF to io.ErrUnexpectedEOF.
+// noEOF converts io.EOF to io.ErrUnexpectedEOF for better error reporting.
+// This helps distinguish between expected end-of-file and unexpected truncation.
 func noEOF(err error) error {
 	if err == io.EOF {
 		return io.ErrUnexpectedEOF
@@ -46,8 +51,8 @@ func noEOF(err error) error {
 	return err
 }
 
-// The gzip file stores a header giving metadata about the compressed file.
-// That header is exposed as the fields of the Writer and Reader structs.
+// The gzip file format stores a header containing metadata about the compressed file.
+// This header is exposed as the fields of the Writer and Reader structs.
 //
 // Strings must be UTF-8 encoded and may only contain Unicode code points
 // U+0001 through U+00FF, due to limitations of the GZIP file format.

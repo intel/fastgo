@@ -1,6 +1,10 @@
 // Copyright (c) 2024, Intel Corporation.
 // SPDX-License-Identifier: BSD-3-Clause
 
+// Package flate provides Intel-optimized implementation of the DEFLATE
+// compression format (RFC 1951). This package offers accelerated compression
+// and decompression for Intel architectures while maintaining compatibility
+// with the standard library compress/flate interface.
 package flate
 
 import (
@@ -11,23 +15,27 @@ import (
 	"io"
 )
 
+// Type aliases for compatibility with standard library
 type (
-	Reader            = flate.Reader
-	Resetter          = flate.Resetter
-	CorruptInputError = flate.CorruptInputError
+	Reader            = flate.Reader            // Standard flate reader interface
+	Resetter          = flate.Resetter          // Interface for resetting readers
+	CorruptInputError = flate.CorruptInputError // Error type for corrupt input
 )
 
+// Error definitions for decompression operations
 var (
-	errInvalidBlock    = errors.New("invalid block")
-	errInvalidSymbol   = errors.New("invalid symbol")
-	errInvalidLookBack = errors.New("invalid look back")
+	errInvalidBlock    = errors.New("invalid block")     // Invalid block type or structure
+	errInvalidSymbol   = errors.New("invalid symbol")    // Invalid Huffman symbol
+	errInvalidLookBack = errors.New("invalid look back") // Invalid distance reference
 )
 
+// Internal decompression errors
 var (
-	errEndInput       = errors.New("end of input")
-	errOutputOverflow = errors.New("output overflow")
+	errEndInput       = errors.New("end of input")    // Unexpected end of input
+	errOutputOverflow = errors.New("output overflow") // Output buffer overflow
 )
 
+// isError checks if the error is one of the decompression-specific errors
 func isError(err error) bool {
 	if err == errInvalidBlock || err == errInvalidSymbol || err == errInvalidLookBack {
 		return true
@@ -35,8 +43,13 @@ func isError(err error) bool {
 	return false
 }
 
+// NewReaderDict creates a new Reader with a preset dictionary.
+// Currently delegates to standard library implementation.
 var NewReaderDict = flate.NewReaderDict
 
+// NewReader creates a new Intel-optimized DEFLATE decompressor that reads from r.
+// The decompressor automatically detects whether to use Intel optimizations
+// or fall back to standard library implementation based on CPU capabilities.
 func NewReader(r io.Reader) io.ReadCloser {
 	rr := &decompressor{}
 	rr.r = r
@@ -44,18 +57,23 @@ func NewReader(r io.Reader) io.ReadCloser {
 	return rr
 }
 
+// decompressor implements the Intel-optimized DEFLATE decompressor.
+// It maintains an internal state machine and history buffer for efficient
+// decompression of DEFLATE streams.
 type decompressor struct {
-	state         inflate
-	writePos      int
-	readPos       int
-	historyBuffer [2*historySize + lookAhead]uint8
-	r             io.Reader
-	rBuf          *bufio.Reader
-	err           error
-	peekSize      int
-	eof           bool
+	state         inflate                          // Internal decompression state
+	writePos      int                              // Current write position in history buffer
+	readPos       int                              // Current read position in history buffer
+	historyBuffer [2*historySize + lookAhead]uint8 // Circular buffer for LZ77 lookback
+	r             io.Reader                        // Underlying data source
+	rBuf          *bufio.Reader                    // Buffered reader for efficient I/O
+	err           error                            // Last error encountered
+	peekSize      int                              // Size of data available for peeking
+	eof           bool                             // End of file flag
 }
 
+// Reset resets the decompressor to read from a new underlying Reader.
+// The optional dictionary parameter is currently ignored for compatibility.
 func (r *decompressor) Reset(under io.Reader, _ []byte) error {
 	r.r = under
 	if ur, ok := under.(*bufio.Reader); ok {
@@ -75,12 +93,17 @@ func (r *decompressor) Reset(under io.Reader, _ []byte) error {
 	return nil
 }
 
+// Close closes the decompressor. Currently a no-op as no resources need cleanup.
 func (r *decompressor) Close() error {
 	return nil
 }
 
+// Read implements io.Reader interface, decompressing data into the provided buffer.
+// It returns the number of bytes read and any error encountered.
+// The method processes data in chunks, maintaining internal state between calls.
 func (f *decompressor) Read(b []byte) (n int, err error) {
 	for {
+		// If we have decompressed data available, copy it to the output buffer
 		if f.writePos-f.readPos > 0 {
 			num := copy(b, f.historyBuffer[f.readPos:f.writePos])
 			f.readPos += num
@@ -90,9 +113,11 @@ func (f *decompressor) Read(b []byte) (n int, err error) {
 			}
 			return n, nil
 		}
+		// If we have an error and no more data, return the error
 		if f.err != nil {
 			return 0, f.err
 		}
+		// Process more input data
 		f.err = f.step()
 		if f.err != nil && f.writePos-f.readPos == 0 {
 			return n, f.err
